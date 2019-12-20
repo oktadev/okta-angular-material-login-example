@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
 
@@ -19,10 +19,11 @@ export class LoginComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService
-  ) {}
+  ) {
+  }
 
   async ngOnInit() {
-    this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/game';
+    this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/game';
 
     this.form = this.fb.group({
       username: ['', Validators.email],
@@ -30,7 +31,7 @@ export class LoginComponent implements OnInit {
     });
 
     if (await this.authService.checkAuthenticated()) {
-      this.router.navigate([this.returnUrl]);
+      await this.router.navigate([this.returnUrl]);
     }
   }
 
@@ -42,8 +43,7 @@ export class LoginComponent implements OnInit {
         const username = this.form.get('username').value;
         const password = this.form.get('password').value;
         await this.authService.login(username, password);
-      }
-      catch (err) {
+      } catch (err) {
         this.loginInvalid = true;
       }
     } else {

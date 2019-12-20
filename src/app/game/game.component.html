@@ -10,10 +10,10 @@
 <mat-card>
   <mat-card-content>
     <div *ngIf="playing">
-        <h3>Your Move</h3>
+      <h3>Your Move</h3>
     </div>
     <div *ngIf="!playing">
-        <h3>{{winner || "Start a new game"}}</h3>
+      <h3>{{winner || "Start a new game"}}</h3>
     </div>
     <button mat-raised-button color="primary" *ngIf="!playing" (click)="toggleGame(true)">Start</button>
     <button mat-raised-button color="primary" *ngIf="playing" (click)="toggleGame(false)">Reset</button>

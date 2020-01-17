@@ -8,8 +8,8 @@ import OktaAuth from '@okta/okta-auth-js';
 })
 export class AuthService {
   private authClient = new OktaAuth({
-    issuer: 'https://dev-322018.oktapreview.com/oauth2/default',
-    clientId: '0oaipoqa789EAewTL0h7'
+    issuer: 'https://dev-133320.okta.com/oauth2/default',
+    clientId: '0oa2atheooXCVENi4357'
   });
 
   public isAuthenticated = new BehaviorSubject<boolean>(false);
@@ -27,7 +27,7 @@ export class AuthService {
     const transaction = await this.authClient.signIn({username, password});
 
     if (transaction.status !== 'SUCCESS') {
-      throw 'We cannot handle the ' + transaction.status + ' status';
+      throw Error('We cannot handle the ' + transaction.status + ' status');
     }
     this.isAuthenticated.next(true);
 
@@ -39,8 +39,8 @@ export class AuthService {
       await this.authClient.signOut();
       this.isAuthenticated.next(false);
       this.router.navigate([redirect]);
-    } catch(err) {
+    } catch (err) {
       console.error(err);
-    };
+    }
   }
 }

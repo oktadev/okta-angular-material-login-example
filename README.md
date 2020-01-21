@@ -1,27 +1,61 @@
-# MaterialTicTacToe
+# Angular Material Login Example
+ 
+This example app shows how to create an app with Angular Material and add a fully-functional Login form to it.
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 8.3.21.
+Please read [Build a Beautiful App + Login with Angular Material](https://developer.okta.com/blog/2020/01/21/angular-material-login) to see how this app was created.
 
-## Development server
+**Prerequisites:** 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+* [Node 12+](https://nodejs.org/en/) installed
+* An [Okta Developer Account](https://developer.okta.com/signup)
 
-## Code scaffolding
+> [Okta](https://developer.okta.com/) has Authentication and User Management APIs that reduce development time with instant-on, scalable user infrastructure. Okta's intuitive API and expert support make it easy for developers to authenticate, manage and secure users and roles in any application.
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+* [Getting Started](#getting-started)
+* [Links](#links)
+* [Help](#help)
+* [License](#license)
 
-## Build
+## Getting Started
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `--prod` flag for a production build.
+To install this example application, run the following commands:
 
-## Running unit tests
+```bash
+git clone https://github.com/oktadeveloper/okta-angular-material-login-example.git
+cd okta-angular-material-login-example
+npm install
+```
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+### Create an OIDC App on Okta
 
-## Running end-to-end tests
+Register a new application by going to **Applications** > **Add Application**. On the next screen, choose **Single Page App** and click **Next**.
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+On the following screen, you can edit the application's settings. Make sure that the port number is 4200 and the base URI is `http://localhost:4200/`. Change the Login Redirect URI to `http://localhost:4200/login`. Once you are done, you will see a **Client ID**.
 
-## Further help
+### Configure your Okta Settings
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+Copy your org URL and client ID into `src/app/auth.service.ts`:
+
+```js
+private authClient = new OktaAuth({
+  issuer: 'https://{YourOktaDomain}/oauth2/default',
+  clientId: '{ClientId}'
+});
+```
+
+Start everything with `ng serve` and you'll be able to login with Angular Material and Okta!
+
+## Links
+
+This example uses the following open source libraries:
+
+* [Angular](https://angular.io)
+* [Okta Auth JavaScript SDK](https://github.com/okta/okta-auth-js)
+
+## Help
+
+Please post any questions as issues in this repository, or visit our [Okta Developer Forums](https://devforum.okta.com/).
+
+## License
+
+Apache 2.0, see [LICENSE](LICENSE).

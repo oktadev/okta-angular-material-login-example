@@ -50,4 +50,9 @@ export class LoginComponent implements OnInit {
       this.formSubmitAttempt = true;
     }
   }
+
+  onFocus(event: any) {
+    this.loginInvalid = false;
+  }
+
 }

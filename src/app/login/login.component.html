@@ -6,13 +6,13 @@
         The username and password were not recognised
       </mat-error>
       <mat-form-field class="full-width-input">
-        <input matInput placeholder="Email" formControlName="username" required>
+        <input matInput placeholder="Email" formControlName="username" required (focus)="onFocus($event)">
         <mat-error>
           Please provide a valid email address
         </mat-error>
       </mat-form-field>
       <mat-form-field class="full-width-input">
-        <input matInput type="password" placeholder="Password" formControlName="password" required>
+        <input matInput type="password" placeholder="Password" formControlName="password" required (focus)="onFocus($event)">
         <mat-error>
           Please provide a valid password
         </mat-error>

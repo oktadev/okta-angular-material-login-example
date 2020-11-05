@@ -11,7 +11,6 @@ import { AuthService } from '../auth.service';
 export class LoginComponent implements OnInit {
   form: FormGroup;
   public loginInvalid: boolean;
-  private formSubmitAttempt: boolean;
   private returnUrl: string;
 
   constructor(
@@ -37,7 +36,6 @@ export class LoginComponent implements OnInit {
 
   async onSubmit() {
     this.loginInvalid = false;
-    this.formSubmitAttempt = false;
     if (this.form.valid) {
       try {
         const username = this.form.get('username').value;
@@ -46,8 +44,6 @@ export class LoginComponent implements OnInit {
       } catch (err) {
         this.loginInvalid = true;
       }
-    } else {
-      this.formSubmitAttempt = true;
     }
   }
 

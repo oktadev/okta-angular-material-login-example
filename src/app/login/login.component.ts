@@ -10,8 +10,8 @@ import { AuthService } from '../auth.service';
 })
 export class LoginComponent implements OnInit {
   form: FormGroup;
-  public loginInvalid: boolean;
-  private formSubmitAttempt: boolean;
+  public loginInvalid = false;
+  private formSubmitAttempt = false;
   private returnUrl: string;
 
   constructor(
@@ -20,28 +20,27 @@ export class LoginComponent implements OnInit {
     private router: Router,
     private authService: AuthService
   ) {
-  }
-
-  async ngOnInit() {
     this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/game';
 
     this.form = this.fb.group({
       username: ['', Validators.email],
       password: ['', Validators.required]
     });
+  }
 
+  async ngOnInit(): Promise<void> {
     if (await this.authService.checkAuthenticated()) {
       await this.router.navigate([this.returnUrl]);
     }
   }
 
-  async onSubmit() {
+  async onSubmit(): Promise<void> {
     this.loginInvalid = false;
     this.formSubmitAttempt = false;
     if (this.form.valid) {
       try {
-        const username = this.form.get('username').value;
-        const password = this.form.get('password').value;
+        const username = this.form.get('username')?.value;
+        const password = this.form.get('password')?.value;
         await this.authService.login(username, password);
       } catch (err) {
         this.loginInvalid = true;

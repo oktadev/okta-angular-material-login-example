@@ -1,15 +1,15 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
-import OktaAuth from '@okta/okta-auth-js';
+import { OktaAuth } from '@okta/okta-auth-js';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
   private authClient = new OktaAuth({
-    issuer: 'https://dev-133320.okta.com/oauth2/default',
-    clientId: '0oa2atheooXCVENi4357'
+    issuer: 'https://dev-9323263.okta.com/oauth2/default',
+    clientId: '0oafgkleyb98cJgcB5d6'
   });
 
   public isAuthenticated = new BehaviorSubject<boolean>(false);
@@ -17,13 +17,13 @@ export class AuthService {
   constructor(private router: Router) {
   }
 
-  async checkAuthenticated() {
+  async checkAuthenticated(): Promise<boolean> {
     const authenticated = await this.authClient.session.exists();
     this.isAuthenticated.next(authenticated);
     return authenticated;
   }
 
-  async login(username: string, password: string) {
+  async login(username: string, password: string): Promise<void> {
     const transaction = await this.authClient.signIn({username, password});
 
     if (transaction.status !== 'SUCCESS') {
@@ -34,11 +34,11 @@ export class AuthService {
     this.authClient.session.setCookieAndRedirect(transaction.sessionToken);
   }
 
-  async logout(redirect: string) {
+  async logout(redirect: string): Promise<void> {
     try {
       await this.authClient.signOut();
       this.isAuthenticated.next(false);
-      this.router.navigate([redirect]);
+      await this.router.navigate([redirect]);
     } catch (err) {
       console.error(err);
     }

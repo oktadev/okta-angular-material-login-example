@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import Minimax from 'tic-tac-toe-minimax';
 const { GameStep } = Minimax;
 
@@ -7,20 +7,15 @@ const { GameStep } = Minimax;
   templateUrl: './game.component.html',
   styleUrls: ['./game.component.css']
 })
-export class GameComponent implements OnInit {
+export class GameComponent {
 
   public gameState: Array<number | string> = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-  public winner: string;
+  public winner: string | undefined;
   public playing = false;
   public computerFirst = false;
   public difficulty: 'Easy'|'Normal'|'Hard' = 'Normal';
 
-  constructor() {}
-
-  ngOnInit() {
-  }
-
-  toggleGame(toggle: boolean) {
+  toggleGame(toggle: boolean): void {
     if (toggle === this.playing) {
       return;
     }
@@ -35,13 +30,13 @@ export class GameComponent implements OnInit {
     this.playing = toggle;
   }
 
-  makeComputerMove() {
+  makeComputerMove(): void {
     const symbols = {
       huPlayer: 'X',
       aiPlayer: 'O'
     };
 
-    const winnerMapping = {
+    const winnerMapping: {[index: string]: any} = {
       huPlayer: 'Human Wins!',
       aiPlayer: 'Computer Wins!',
       draw: 'It\'s a Draw!'
@@ -56,7 +51,7 @@ export class GameComponent implements OnInit {
     }
   }
 
-  makeHumanMove(field: number) {
+  makeHumanMove(field: number): void {
     if (!this.playing || typeof this.gameState[field] !== 'number') {
       return;
     }
@@ -64,5 +59,4 @@ export class GameComponent implements OnInit {
     this.gameState[field] = 'X';
     this.makeComputerMove();
   }
-
 }

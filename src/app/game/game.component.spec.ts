@@ -1,25 +1,22 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { GameComponent } from './game.component';
-import {
-  MatCardModule,
-  MatFormFieldModule,
-  MatIconModule,
-  MatLabel,
-  MatOptionModule,
-  MatSelectModule,
-  MatSlideToggleModule
-} from '@angular/material';
 import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatOptionModule } from '@angular/material/core';
+import { MatSelectModule } from '@angular/material/select';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 
 describe('GameComponent', () => {
   let component: GameComponent;
   let fixture: ComponentFixture<GameComponent>;
 
-  beforeEach(async(() => {
-    TestBed.configureTestingModule({
-      declarations: [GameComponent],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      declarations: [ GameComponent ],
       imports: [
         FormsModule,
         MatCardModule,
@@ -31,8 +28,8 @@ describe('GameComponent', () => {
         NoopAnimationsModule
       ]
     })
-      .compileComponents();
-  }));
+    .compileComponents();
+  });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(GameComponent);

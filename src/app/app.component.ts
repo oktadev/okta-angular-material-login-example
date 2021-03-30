@@ -8,19 +8,19 @@ import { AuthService } from './auth.service';
 })
 export class AppComponent implements OnInit {
   title = 'Tic Tac Toe';
-  isAuthenticated: boolean;
+  isAuthenticated = false;
 
   constructor(public authService: AuthService) {
     this.authService.isAuthenticated.subscribe(
-      (isAuthenticated: boolean)  => this.isAuthenticated = isAuthenticated
+      (isAuthenticated: boolean) => this.isAuthenticated = isAuthenticated
     );
   }
 
-  async ngOnInit() {
+  async ngOnInit(): Promise<void> {
     this.isAuthenticated = await this.authService.checkAuthenticated();
   }
 
-  logout() {
-    this.authService.logout('/');
+  async logout(): Promise<void> {
+    await this.authService.logout('/');
   }
 }

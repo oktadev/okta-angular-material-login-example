@@ -1,26 +1,30 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AuthService } from './auth.service';
+import { Subject, take, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent implements OnInit {
-  title = 'Tic Tac Toe';
-  isAuthenticated = false;
+export class AppComponent implements OnInit, OnDestroy {
+  public title = 'Tic Tac Toe';
+  public isAuthenticated = false;
+  private _destroySub$ = new Subject<void>();
 
-  constructor(public authService: AuthService) {
-    this.authService.isAuthenticated.subscribe(
-      (isAuthenticated: boolean) => this.isAuthenticated = isAuthenticated
-    );
+  constructor(private _authService: AuthService) { }
+
+  public ngOnInit(): void {
+    this._authService.isAuthenticated$.pipe(
+      takeUntil(this._destroySub$)
+    ).subscribe((isAuthenticated: boolean) => this.isAuthenticated = isAuthenticated);
   }
 
-  async ngOnInit(): Promise<void> {
-    this.isAuthenticated = await this.authService.checkAuthenticated();
+  public ngOnDestroy(): void {
+    this._destroySub$.next();
   }
 
-  async logout(): Promise<void> {
-    await this.authService.logout('/');
+  public logout(): void {
+    this._authService.logout('/').pipe(take(1));
   }
 }

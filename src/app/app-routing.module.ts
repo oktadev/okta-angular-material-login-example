@@ -3,21 +3,21 @@ import { RouterModule, Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { GameComponent } from './game/game.component';
 import { LoginComponent } from './login/login.component';
-import { AuthGuardService } from './auth-guard.service';
+import { AuthGuard } from './auth.guard';
 
 const routes: Routes = [
   {
-    path: '',
-    component: HomeComponent
+    path: 'game',
+    component: GameComponent,
+    canActivate: [ AuthGuard ]
   },
   {
     path: 'login',
     component: LoginComponent
   },
   {
-    path: 'game',
-    component: GameComponent,
-    canActivate: [ AuthGuardService ]
+    path: '',
+    component: HomeComponent
   },
 ];
 

@@ -15,7 +15,7 @@ export class GameComponent {
   public computerFirst = false;
   public difficulty: 'Easy'|'Normal'|'Hard' = 'Normal';
 
-  toggleGame(toggle: boolean): void {
+  public toggleGame(toggle: boolean): void {
     if (toggle === this.playing) {
       return;
     }
@@ -30,7 +30,16 @@ export class GameComponent {
     this.playing = toggle;
   }
 
-  makeComputerMove(): void {
+  public makeHumanMove(field: number): void {
+    if (!this.playing || typeof this.gameState[field] !== 'number') {
+      return;
+    }
+
+    this.gameState[field] = 'X';
+    this.makeComputerMove();
+  }
+
+  private makeComputerMove(): void {
     const symbols = {
       huPlayer: 'X',
       aiPlayer: 'O'
@@ -51,12 +60,5 @@ export class GameComponent {
     }
   }
 
-  makeHumanMove(field: number): void {
-    if (!this.playing || typeof this.gameState[field] !== 'number') {
-      return;
-    }
 
-    this.gameState[field] = 'X';
-    this.makeComputerMove();
-  }
 }

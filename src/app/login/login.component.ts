@@ -1,52 +1,51 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../auth.service';
+import { filter, Subject, take, takeUntil } from 'rxjs';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
-  form: FormGroup;
-  public loginInvalid = false;
-  private formSubmitAttempt = false;
-  private returnUrl: string;
+export class LoginComponent implements OnInit, OnDestroy {
+  public loginValid = true;
+  public username = '';
+  public password = '';
+
+  private _destroySub$ = new Subject<void>();
+  private readonly returnUrl: string;
 
   constructor(
-    private fb: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private authService: AuthService
+    private _route: ActivatedRoute,
+    private _router: Router,
+    private _authService: AuthService
   ) {
-    this.returnUrl = this.route.snapshot.queryParams.returnUrl || '/game';
+    this.returnUrl = this._route.snapshot.queryParams['returnUrl'] || '/game';
+  }
 
-    this.form = this.fb.group({
-      username: ['', Validators.email],
-      password: ['', Validators.required]
+  public ngOnInit(): void {
+    this._authService.isAuthenticated$.pipe(
+      filter((isAuthenticated: boolean) => isAuthenticated),
+      takeUntil(this._destroySub$)
+    ).subscribe( _ => this._router.navigateByUrl(this.returnUrl));
+  }
+
+  public ngOnDestroy(): void {
+    this._destroySub$.next();
+  }
+
+  public onSubmit(): void {
+    this.loginValid = true;
+
+    this._authService.login(this.username, this.password).pipe(
+      take(1)
+    ).subscribe({
+      next: _ => {
+        this.loginValid = true;
+        this._router.navigateByUrl('/game');
+      },
+      error: _ => this.loginValid = false
     });
-  }
-
-  async ngOnInit(): Promise<void> {
-    if (await this.authService.checkAuthenticated()) {
-      await this.router.navigate([this.returnUrl]);
-    }
-  }
-
-  async onSubmit(): Promise<void> {
-    this.loginInvalid = false;
-    this.formSubmitAttempt = false;
-    if (this.form.valid) {
-      try {
-        const username = this.form.get('username')?.value;
-        const password = this.form.get('password')?.value;
-        await this.authService.login(username, password);
-      } catch (err) {
-        this.loginInvalid = true;
-      }
-    } else {
-      this.formSubmitAttempt = true;
-    }
   }
 }

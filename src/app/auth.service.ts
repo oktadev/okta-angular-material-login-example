@@ -1,46 +1,49 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
+import { Injectable, OnDestroy } from '@angular/core';
+import { BehaviorSubject, catchError, from, map, Observable, tap } from 'rxjs';
 import { Router } from '@angular/router';
-import { OktaAuth } from '@okta/okta-auth-js';
+import { AuthTransaction, OktaAuth } from '@okta/okta-auth-js';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
-  private authClient = new OktaAuth({
-    issuer: 'https://dev-9323263.okta.com/oauth2/default',
-    clientId: '0oafgkleyb98cJgcB5d6'
-  });
+export class AuthService implements OnDestroy {
 
-  public isAuthenticated = new BehaviorSubject<boolean>(false);
-
-  constructor(private router: Router) {
+  private _authSub$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+  public get isAuthenticated$(): Observable<boolean> {
+    return this._authSub$.asObservable();
   }
 
-  async checkAuthenticated(): Promise<boolean> {
-    const authenticated = await this.authClient.session.exists();
-    this.isAuthenticated.next(authenticated);
-    return authenticated;
+  constructor(private _router: Router, private _authClient: OktaAuth) {
+    this._authClient.session.exists().then(exists => this._authSub$.next(exists));
   }
 
-  async login(username: string, password: string): Promise<void> {
-    const transaction = await this.authClient.signIn({username, password});
+  public ngOnDestroy(): void {
+    this._authSub$.next(false);
+    this._authSub$.complete();
+  }
 
+  public login(username: string, password: string): Observable<void> {
+    return from(this._authClient.signInWithCredentials({username, password})).pipe(
+      map((t: AuthTransaction) => this.handleSignInResponse(t))
+    );
+  }
+
+  public logout(redirect: string): Observable<void> {
+    return from(this._authClient.signOut()).pipe(
+      tap( _ => (this._authSub$.next(false), this._router.navigate([redirect]))),
+      catchError(err => {
+        console.error(err);
+        throw new Error('Unable to sign out');
+      })
+    )
+  }
+
+  private handleSignInResponse(transaction: AuthTransaction): void {
     if (transaction.status !== 'SUCCESS') {
-      throw Error('We cannot handle the ' + transaction.status + ' status');
+      throw new Error(`We cannot handle the ${transaction.status} status`);
     }
-    this.isAuthenticated.next(true);
 
-    this.authClient.session.setCookieAndRedirect(transaction.sessionToken);
-  }
-
-  async logout(redirect: string): Promise<void> {
-    try {
-      await this.authClient.signOut();
-      this.isAuthenticated.next(false);
-      await this.router.navigate([redirect]);
-    } catch (err) {
-      console.error(err);
-    }
+    this._authSub$.next(true)
+    this._authClient.session.setCookieAndRedirect(transaction.sessionToken);
   }
 }

@@ -4,8 +4,16 @@ import { AppComponent } from './app.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatToolbarModule } from '@angular/material/toolbar';
+import { AuthService } from './auth.service';
+import { of } from 'rxjs';
+import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
+import { MatButtonHarness } from '@angular/material/button/testing';
 
 describe('AppComponent', () => {
+  let authSpy = jasmine.createSpyObj<AuthService>([], {
+    isAuthenticated$: of(false)
+  });
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
@@ -17,6 +25,9 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      providers: [
+        { provide: AuthService, useValue: authSpy }
+      ]
     }).compileComponents();
   });
 
@@ -32,10 +43,10 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('Tic Tac Toe');
   });
 
-  it('should render title', () => {
+  it('should render title in a button', async () => {
     const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement;
-    expect(compiled.querySelector('mat-toolbar').textContent).toContain('Tic Tac Toe');
+    const loader = TestbedHarnessEnvironment.loader(fixture);
+    const buttons = await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Tic Tac Toe' }));
+    expect(buttons).toHaveSize(1);
   });
 });

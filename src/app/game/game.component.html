@@ -1,6 +1,6 @@
 <mat-card>
-  <mat-card-content>
-    <div [ngClass]="{'tic-tac-toe': true, playing: playing}">
+  <mat-card-content fxLayout="column" fxLayoutAlign="center center">
+    <div gdColumns="repeat(3, 48px)" gdGap="1rem">
       <div class="game-field" *ngFor="let field of gameState; let i = index" (click)="makeHumanMove(i)">
         {{field === 'X' || field === 'O' ? field : ''}}
       </div>
@@ -8,7 +8,7 @@
   </mat-card-content>
 </mat-card>
 <mat-card>
-  <mat-card-content>
+  <mat-card-content fxLayout="column" fxLayoutAlign="center center">
     <div *ngIf="playing">
       <h3>Your Move</h3>
     </div>
